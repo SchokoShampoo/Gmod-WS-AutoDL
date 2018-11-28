@@ -85,10 +85,21 @@ function resource.GetWorkshopCollection(id)
 	resource.AddWorkshopCollection(id)
 end
 
+--Adding all Addons from the Server to addons.txt
+function resource.AddServerWorkshop()
+	for _, addonData in ipairs(engine.GetAddons()) do
+    addAddon(addonData.wsid)
+	end
+end
+
 --Checking the collection every mapchange and updating the needed addons
 hook.Add("Initialize", "LoadWorkshop", function()
 	local workshop = file.Read("workshop\\workshop.txt", "DATA")
 	for i in string.gmatch(workshop, "%S+") do
+		if i == "0" then
+			resource.AddServerWorkshop()
+			break;
+		end
 		resource.GetWorkshopCollection(i)
 	end
 	checkDifferences()

@@ -2,18 +2,21 @@ local old_addons = {}
 local new_addons = {}
 local collections = {}
 
+
 --Creating or reading addons.txt
 if not file.Exists("workshop\\addons.txt", "DATA") then
+	file.CreateDir("workshop")
 	file.Write("workshop\\addons.txt", "0")
 else
 	local addonList = file.Read("workshop\\addons.txt", "DATA")
 	for i in string.gmatch(addonList, "%S+") do
-		list.Add(old_addons, i)
+		table.insert(old_addons, i)
 	end
 end
 
 --Creating workshop.txt if it doesn't exists
 if not file.Exists("workshop\\workshop.txt", "DATA") then
+	file.CreateDir("workshop")
 	file.Write("workshop\\workshop.txt", "0")
 end
 
@@ -27,12 +30,8 @@ end
 
 --adding addon to addon.txt
 local function addAddon(id)
-	if not list.Contains(old_addons, id) then
-		file.Append("workshop\\addons.txt", id.."\n")
-		list.Add(old_addons, id)
-	end
-	if not list.Contains(new_addons, id) then
-		list.Add(new_addons, id)
+	if not table.HasValue(new_addons, id) then
+		table.insert(new_addons, id)
 	end
 end
 
@@ -52,11 +51,10 @@ local function checkDifferences()
 	end
 
 	if diff ~= {} then
-		local addonString = ""
+		local addons = file.Open("workshop\\addons.txt", "w", "DATA")
 		for _, k in ipairs(new_addons) do
-			addonString = addonString .. k .. "\n"
+			addons:Write(k.."\n")
 		end
-		file.Write("workshop\\addons.txt", addonString)
 		old_addons = new_addons
 	end
 end
@@ -88,12 +86,13 @@ end
 --Adding all Addons from the Server to addons.txt
 function resource.AddServerWorkshop()
 	for _, addonData in ipairs(engine.GetAddons()) do
-    addAddon(addonData.wsid)
+		addAddon(addonData.wsid)
 	end
 end
 
---Checking the collection every mapchange and updating the needed addons
-hook.Add("Initialize", "LoadWorkshop", function()
+--Checking the collection every new Round and updating the needed addons
+hook.Add("TTTBeginRound", "LoadWorkshop", function()
+
 	local workshop = file.Read("workshop\\workshop.txt", "DATA")
 	for i in string.gmatch(workshop, "%S+") do
 		if i == "0" then
@@ -104,6 +103,6 @@ hook.Add("Initialize", "LoadWorkshop", function()
 	end
 	checkDifferences()
 	collections = {}
-	new_addons = {}
 	AddWorkshopAddons()
+	new_addons = {}
 end)

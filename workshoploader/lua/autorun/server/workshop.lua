@@ -98,7 +98,7 @@ hook.Add("Initialize", "LoadWorkshop", function()
 	for i in string.gmatch(workshop, "%S+") do
 		if i == "0" then
 			resource.AddServerWorkshop()
-			break;
+			break
 		end
 		resource.GetWorkshopCollection(i)
 	end

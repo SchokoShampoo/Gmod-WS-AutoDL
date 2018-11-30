@@ -92,7 +92,6 @@ end
 
 --Checking the collection every new Round and updating the needed addons
 hook.Add("TTTBeginRound", "LoadWorkshop", function()
-
 	local workshop = file.Read("workshop\\workshop.txt", "DATA")
 	for i in string.gmatch(workshop, "%S+") do
 		if i == "0" then
@@ -106,3 +105,5 @@ hook.Add("TTTBeginRound", "LoadWorkshop", function()
 	AddWorkshopAddons()
 	new_addons = {}
 end)
+
+hook.Add("Initialize", "LoadWorkshopInit", AddWorkshopAddons())

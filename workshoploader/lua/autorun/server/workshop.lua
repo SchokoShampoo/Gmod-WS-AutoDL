@@ -91,7 +91,7 @@ function resource.AddServerWorkshop()
 end
 
 --Checking the collection every new Round and updating the needed addons
-hook.Add("TTTBeginRound", "LoadWorkshop", function()
+hook.Add("TTTPrepareRound", "LoadWorkshop", function()
 	local workshop = file.Read("workshop\\workshop.txt", "DATA")
 	for i in string.gmatch(workshop, "%S+") do
 		if i == "0" then
